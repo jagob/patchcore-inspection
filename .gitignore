@@ -1,3 +1,7 @@
 .idea/
 __pycache__/
 LabletAnomaly.egg-info/
+build
+evaluated_results
+results
+src/patchcore.egg-info/
