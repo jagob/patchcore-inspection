@@ -99,6 +99,21 @@ def run(
                 torch.cuda.empty_cache()
                 PatchCore.fit(dataloaders["training"])
 
+            # (Optional) Store PatchCore model for later re-use.
+            # SAVE all patchcores only if mean_threshold is passed?
+            if save_patchcore_model:
+                patchcore_save_path = os.path.join(
+                    run_save_path, "models", dataset_name
+                )
+                os.makedirs(patchcore_save_path, exist_ok=True)
+                for i, PatchCore in enumerate(PatchCore_list):
+                    prepend = (
+                        "Ensemble-{}-{}_".format(i + 1, len(PatchCore_list))
+                        if len(PatchCore_list) > 1
+                        else ""
+                    )
+                    PatchCore.save_to_path(patchcore_save_path, prepend)
+
             torch.cuda.empty_cache()
             aggregator = {"scores": [], "segmentations": []}
             for i, PatchCore in enumerate(PatchCore_list):
@@ -210,21 +225,6 @@ def run(
             for key, item in result_collect[-1].items():
                 if key != "dataset_name":
                     LOGGER.info("{0}: {1:3.3f}".format(key, item))
-
-            # (Optional) Store PatchCore model for later re-use.
-            # SAVE all patchcores only if mean_threshold is passed?
-            if save_patchcore_model:
-                patchcore_save_path = os.path.join(
-                    run_save_path, "models", dataset_name
-                )
-                os.makedirs(patchcore_save_path, exist_ok=True)
-                for i, PatchCore in enumerate(PatchCore_list):
-                    prepend = (
-                        "Ensemble-{}-{}_".format(i + 1, len(PatchCore_list))
-                        if len(PatchCore_list) > 1
-                        else ""
-                    )
-                    PatchCore.save_to_path(patchcore_save_path, prepend)
 
         LOGGER.info("\n\n-----\n")
 
