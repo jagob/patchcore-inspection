@@ -9,9 +9,9 @@ from torchvision import transforms
 
 _CLASSNAMES = []
 
-# TODO
-IMAGENET_MEAN = [0.485, 0.456, 0.406]
-IMAGENET_STD = [0.229, 0.224, 0.225]
+# # TODO
+# IMAGENET_MEAN = [0.485, 0.456, 0.406]
+# IMAGENET_STD = [0.229, 0.224, 0.225]
 
 
 class DatasetSplit(Enum):
@@ -29,7 +29,7 @@ class HarborDataset(torch.utils.data.Dataset):
         self,
         source,
         classname,
-        csv_path,
+        csv_path=None,
         resize=256,
         imagesize=224,
         # img_width: int = 384
@@ -64,15 +64,15 @@ class HarborDataset(torch.utils.data.Dataset):
 
         self.transform_img = [
             transforms.Resize(resize),
-            # transforms.CenterCrop(imagesize),
+            transforms.CenterCrop(imagesize),
             transforms.ToTensor(),
-            transforms.Normalize(mean=IMAGENET_MEAN, std=IMAGENET_STD),
+            # transforms.Normalize(mean=IMAGENET_MEAN, std=IMAGENET_STD),
         ]
         self.transform_img = transforms.Compose(self.transform_img)
 
         self.transform_mask = [
             transforms.Resize(resize),
-            # transforms.CenterCrop(imagesize),
+            transforms.CenterCrop(imagesize),
             transforms.ToTensor(),
         ]
         self.transform_mask = transforms.Compose(self.transform_mask)
@@ -151,9 +151,11 @@ class HarborDataset(torch.utils.data.Dataset):
                 # csv_path = r'/home/jacob/code/harbor-synthetic/src/data/split/harbor_train_0100.csv'
                 csv_path = r'/home/jacob/code/harbor-synthetic/src/data/split/harbor_train_0001.csv'
             elif self.split == DatasetSplit.TEST:
-                # csv_path = r'/home/jacob/code/harbor-synthetic/src/data/split/harbor_appearance_test.csv'
-                # csv_path = r'/home/jacob/code/harbor-synthetic/src/data/split/harbor_appearance_test_1.csv'
-                csv_path = self.csv_path
+                if self.csv_path:
+                    csv_path = self.csv_path
+                else:
+                    # csv_path = r'/home/jacob/code/harbor-synthetic/src/data/split/harbor_appearance_test.csv'
+                    csv_path = r'/home/jacob/code/harbor-synthetic/src/data/split/harbor_appearance_test_1.csv'
             else:
                 raise ValueError()
             df = pd.read_csv(csv_path)

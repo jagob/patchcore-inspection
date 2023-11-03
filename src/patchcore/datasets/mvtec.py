@@ -42,6 +42,7 @@ class MVTecDataset(torch.utils.data.Dataset):
         self,
         source,
         classname,
+        csv_path=None,
         resize=256,
         imagesize=224,
         split=DatasetSplit.TRAIN,
@@ -67,6 +68,7 @@ class MVTecDataset(torch.utils.data.Dataset):
         self.source = source
         self.split = split
         self.classnames_to_use = [classname] if classname is not None else _CLASSNAMES
+        self.csv_path = csv_path
         self.train_val_split = train_val_split
 
         self.imgpaths_per_class, self.data_to_iterate = self.get_image_data()

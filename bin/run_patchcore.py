@@ -196,22 +196,27 @@ def run(
                 scores, anomaly_labels
             )["auroc"]
 
-            # Compute PRO score & PW Auroc for all images
-            pixel_scores = patchcore.metrics.compute_pixelwise_retrieval_metrics(
-                segmentations, masks_gt
-            )
-            full_pixel_auroc = pixel_scores["auroc"]
+            csv_path = dataloaders['testing'].dataset.csv_path
+            if not csv_path:
+                # Compute PRO score & PW Auroc for all images
+                pixel_scores = patchcore.metrics.compute_pixelwise_retrieval_metrics(
+                    segmentations, masks_gt
+                )
+                full_pixel_auroc = pixel_scores["auroc"]
 
-            # Compute PRO score & PW Auroc only images with anomalies
-            sel_idxs = []
-            for i in range(len(masks_gt)):
-                if np.sum(masks_gt[i]) > 0:
-                    sel_idxs.append(i)
-            pixel_scores = patchcore.metrics.compute_pixelwise_retrieval_metrics(
-                [segmentations[i] for i in sel_idxs],
-                [masks_gt[i] for i in sel_idxs],
-            )
-            anomaly_pixel_auroc = pixel_scores["auroc"]
+                # Compute PRO score & PW Auroc only images with anomalies
+                sel_idxs = []
+                for i in range(len(masks_gt)):
+                    if np.sum(masks_gt[i]) > 0:
+                        sel_idxs.append(i)
+                pixel_scores = patchcore.metrics.compute_pixelwise_retrieval_metrics(
+                    [segmentations[i] for i in sel_idxs],
+                    [masks_gt[i] for i in sel_idxs],
+                )
+                anomaly_pixel_auroc = pixel_scores["auroc"]
+            else:
+                full_pixel_auroc = 0
+                anomaly_pixel_auroc = 0
 
             result_collect.append(
                 {
@@ -337,6 +342,7 @@ def sampler(name, percentage):
 @click.argument("name", type=str)
 @click.argument("data_path", type=click.Path(exists=True, file_okay=False))
 @click.option("--subdatasets", "-d", multiple=True, type=str, required=True)
+@click.option("--csv_path", default=None, type=str, show_default=True)
 @click.option("--train_val_split", type=float, default=1, show_default=True)
 @click.option("--batch_size", default=2, type=int, show_default=True)
 @click.option("--num_workers", default=8, type=int, show_default=True)
@@ -347,6 +353,7 @@ def dataset(
     name,
     data_path,
     subdatasets,
+    csv_path,
     train_val_split,
     batch_size,
     resize,
@@ -374,6 +381,7 @@ def dataset(
             test_dataset = dataset_library.__dict__[dataset_info[1]](
                 data_path,
                 classname=subdataset,
+                csv_path=csv_path,
                 resize=resize,
                 imagesize=imagesize,
                 split=dataset_library.DatasetSplit.TEST,
