@@ -6,6 +6,7 @@ import sys
 
 import click
 import numpy as np
+import pandas as pd
 import torch
 
 import patchcore.common
@@ -24,7 +25,7 @@ _DATASETS = {
 
 @click.group(chain=True)
 @click.argument("results_path", type=str)
-@click.option("--gpu", type=int, default=[0], multiple=True, show_default=True)
+@click.option("--gpu", type=int, default=[], multiple=True, show_default=True)
 @click.option("--seed", type=int, default=0, show_default=True)
 @click.option("--save_segmentation_images", is_flag=True)
 def main(**kwargs):
@@ -70,7 +71,6 @@ def run(methods, results_path, gpu, seed, save_segmentation_images):
         dataset_name = dataloaders["testing"].name
 
         with device_context:
-
             torch.cuda.empty_cache()
             if dataloader_count < n_patchcores:
                 PatchCore_list = next(patchcore_iter)
@@ -94,6 +94,15 @@ def run(methods, results_path, gpu, seed, save_segmentation_images):
             max_scores = scores.max(axis=-1).reshape(-1, 1)
             scores = (scores - min_scores) / (max_scores - min_scores)
             scores = np.mean(scores, axis=0)
+
+            # save scores
+            csv_path = dataloaders['testing'].dataset.csv_path
+            if csv_path:
+                df = pd.read_csv(csv_path)
+                df['score'] = scores
+                csv_name = 'results_' + os.path.basename(csv_path)
+                csv_save_path = os.path.join(results_path, csv_name)
+                df.to_csv(csv_save_path, index=False)
 
             segmentations = np.array(aggregator["segmentations"])
             min_scores = (
@@ -244,13 +253,22 @@ def patch_core_loader(patch_core_paths, faiss_on_gpu, faiss_num_workers):
 @click.argument("name", type=str)
 @click.argument("data_path", type=click.Path(exists=True, file_okay=False))
 @click.option("--subdatasets", "-d", multiple=True, type=str, required=True)
+@click.option("--csv_path", default=None, type=str, show_default=True)
 @click.option("--batch_size", default=1, type=int, show_default=True)
 @click.option("--num_workers", default=8, type=int, show_default=True)
 @click.option("--resize", default=256, type=int, show_default=True)
 @click.option("--imagesize", default=224, type=int, show_default=True)
 @click.option("--augment", is_flag=True)
 def dataset(
-    name, data_path, subdatasets, batch_size, resize, imagesize, num_workers, augment
+    name,
+    data_path,
+    subdatasets,
+    csv_path,
+    batch_size,
+    resize,
+    imagesize,
+    num_workers,
+    augment,
 ):
     dataset_info = _DATASETS[name]
     dataset_library = __import__(dataset_info[0], fromlist=[dataset_info[1]])
@@ -260,6 +278,7 @@ def dataset(
             test_dataset = dataset_library.__dict__[dataset_info[1]](
                 data_path,
                 classname=subdataset,
+                csv_path=csv_path,
                 resize=resize,
                 imagesize=imagesize,
                 split=dataset_library.DatasetSplit.TEST,

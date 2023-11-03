@@ -29,6 +29,7 @@ class HarborDataset(torch.utils.data.Dataset):
         self,
         source,
         classname,
+        csv_path,
         resize=256,
         imagesize=224,
         # img_width: int = 384
@@ -56,6 +57,7 @@ class HarborDataset(torch.utils.data.Dataset):
         self.source = source
         self.split = split
         self.classnames_to_use = [classname] if classname is not None else _CLASSNAMES
+        self.csv_path = csv_path
         self.train_val_split = train_val_split
 
         self.imgpaths_per_class, self.data_to_iterate = self.get_image_data()
@@ -146,19 +148,17 @@ class HarborDataset(torch.utils.data.Dataset):
 
             csv_path = ''
             if self.split == DatasetSplit.TRAIN:
+                # csv_path = r'/home/jacob/code/harbor-synthetic/src/data/split/harbor_train_0100.csv'
                 csv_path = r'/home/jacob/code/harbor-synthetic/src/data/split/harbor_train_0001.csv'
             elif self.split == DatasetSplit.TEST:
                 # csv_path = r'/home/jacob/code/harbor-synthetic/src/data/split/harbor_appearance_test.csv'
-                csv_path = r'/home/jacob/code/harbor-synthetic/src/data/split/harbor_appearance_test_1.csv'
+                # csv_path = r'/home/jacob/code/harbor-synthetic/src/data/split/harbor_appearance_test_1.csv'
+                csv_path = self.csv_path
             else:
                 raise ValueError()
             df = pd.read_csv(csv_path)
 
             imgpaths_per_class[classname] = {}
-            # classpath = os.path.join(self.source, classname, self.split.value)
-            # anomaly_types = os.listdir(classpath)
-            # anomaly_types = ['anomaly_type']
-            # TODO only good types
             anomaly_types = ['harbor_anomaly1']
             for anomaly in anomaly_types:
                 df.img_path = data_path + os.sep + df.img_path
@@ -168,12 +168,19 @@ class HarborDataset(torch.utils.data.Dataset):
                     imgpaths_per_class[classname][anomaly] = df.img_path.tolist()
                     maskpaths_per_class[classname]["good"] = None
                 elif self.split == DatasetSplit.TEST:
-                    gt = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,]
-                    imgpaths_per_class[classname]['good'] = df.img_path[~np.array(gt, dtype=bool)].to_list()
-                    imgpaths_per_class[classname][anomaly] = df.img_path[np.array(gt, dtype=bool)].to_list()
+                    imgpaths_per_class[classname]['good'] = df.img_path[
+                        df.frame_gt == 0
+                    ].to_list()
+                    imgpaths_per_class[classname][anomaly] = df.img_path[
+                        df.frame_gt == 1
+                    ].to_list()
 
-                    maskpaths_per_class[classname]['good'] = imgpaths_per_class[classname]['good']
-                    maskpaths_per_class[classname][anomaly] = imgpaths_per_class[classname][anomaly]
+                    maskpaths_per_class[classname]['good'] = imgpaths_per_class[
+                        classname
+                    ]['good']
+                    maskpaths_per_class[classname][anomaly] = imgpaths_per_class[
+                        classname
+                    ][anomaly]
 
         # Unrolls the data dictionary to an easy-to-iterate list.
         data_to_iterate = []
