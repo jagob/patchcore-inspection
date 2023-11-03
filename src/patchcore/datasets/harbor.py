@@ -29,7 +29,8 @@ class HarborDataset(torch.utils.data.Dataset):
         self,
         source,
         classname,
-        csv_path=None,
+        train_csv=None,
+        test_csv=None,
         resize=256,
         imagesize=224,
         # img_width: int = 384
@@ -57,7 +58,8 @@ class HarborDataset(torch.utils.data.Dataset):
         self.source = source
         self.split = split
         self.classnames_to_use = [classname] if classname is not None else _CLASSNAMES
-        self.csv_path = csv_path
+        self.train_csv = train_csv
+        self.test_csv = test_csv
         self.train_val_split = train_val_split
 
         self.imgpaths_per_class, self.data_to_iterate = self.get_image_data()
@@ -148,11 +150,13 @@ class HarborDataset(torch.utils.data.Dataset):
 
             csv_path = ''
             if self.split == DatasetSplit.TRAIN:
+                csv_path = self.train_csv
+                # csv_path = r'/home/jacob/code/harbor-synthetic/src/data/split/harbor_train_1000.csv'
                 # csv_path = r'/home/jacob/code/harbor-synthetic/src/data/split/harbor_train_0100.csv'
-                csv_path = r'/home/jacob/code/harbor-synthetic/src/data/split/harbor_train_0001.csv'
+                # csv_path = r'/home/jacob/code/harbor-synthetic/src/data/split/harbor_train_0001.csv'
             elif self.split == DatasetSplit.TEST:
-                if self.csv_path:
-                    csv_path = self.csv_path
+                if self.test_csv:
+                    csv_path = self.test_csv
                 else:
                     # csv_path = r'/home/jacob/code/harbor-synthetic/src/data/split/harbor_appearance_test.csv'
                     csv_path = r'/home/jacob/code/harbor-synthetic/src/data/split/harbor_appearance_test_1.csv'

@@ -37,6 +37,8 @@ def run(methods, results_path, gpu, seed, save_segmentation_images):
     methods = {key: item for (key, item) in methods}
 
     os.makedirs(results_path, exist_ok=True)
+    LOGGER = patchcore.utils.create_logger(path=results_path, file="evaluation.log") 
+    LOGGER.info("Command line arguments: {}".format(" ".join(sys.argv)))
 
     device = patchcore.utils.set_torch_device(gpu)
     # Device context here is specifically set and used later
@@ -96,7 +98,7 @@ def run(methods, results_path, gpu, seed, save_segmentation_images):
             scores = np.mean(scores, axis=0)
 
             # save scores
-            csv_path = dataloaders['testing'].dataset.csv_path
+            csv_path = dataloaders['testing'].dataset.test_csv
             if csv_path:
                 df = pd.read_csv(csv_path)
                 df['score'] = scores
@@ -307,6 +309,4 @@ def dataset(
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
-    LOGGER.info("Command line arguments: {}".format(" ".join(sys.argv)))
     main()

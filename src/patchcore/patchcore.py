@@ -163,12 +163,13 @@ class PatchCore(torch.nn.Module):
 
         features = []
         with tqdm.tqdm(
-            input_data, desc="Computing support features...", position=1, leave=False
+            input_data, desc="Computing support features...", position=1
         ) as data_iterator:
             for image in data_iterator:
                 if isinstance(image, dict):
                     image = image["image"]
                 features.append(_image_to_features(image))
+        print()
 
         features = np.concatenate(features, axis=0)
         features = self.featuresampler.run(features)

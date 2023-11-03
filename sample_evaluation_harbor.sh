@@ -1,9 +1,7 @@
 datapath=/home/jacob/data/ltd
 loadpath=/media/ehd2tb/models/patchcore/harbor
 
-# modelfolder=IM256-3_P01_D1024-1024_PS-3_AN-1_S0_jacob
-# modelfolder=IM224_WR50_L2-3_P01_D1024-1024_PS-3_AN-1_S0_jacob_1
-modelfolder=IM256_WR50_L2-3_P01_D1024-1024_PS-3_AN-1_S0_jacob
+modelfolder=IM256_WR50_L2-3_P01_D1024-1024_PS-3_AN-1_S0
 
 csv_path=/home/jacob/code/harbor-synthetic/src/data/split/harbor_appearance_test_1.csv
 

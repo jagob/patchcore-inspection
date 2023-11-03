@@ -12,6 +12,40 @@ import tqdm
 LOGGER = logging.getLogger(__name__)
 
 
+def create_logger(path, file):
+    """[Create a log file to record the experiment's logs]
+    Arguments:
+        path {string} -- path to the directory
+        file {string} -- file name
+    Returns:
+        [obj] -- [logger that record logs]
+    """
+    # check if the file exist
+    os.makedirs(path, exist_ok=True)
+    log_file = os.path.join(path, file)
+    if not os.path.isfile(log_file):
+        open(log_file, "w+").close()
+
+    # configure logger
+    # console_logging_format = "%(levelname)s %(message)s"
+    # file_logging_format = "%(levelname)s: %(asctime)s: %(message)s"
+    console_logging_format = "%(message)s"
+    file_logging_format = "%(asctime)s: %(message)s"
+    datefmt = '%Y-%m-%d %H:%M:%S'
+    logging.basicConfig(level=logging.INFO, format=console_logging_format, datefmt=datefmt)
+    logger = logging.getLogger()
+    # create a file handler for output file
+    handler = logging.FileHandler(log_file)
+    # set the logging level for log file
+    handler.setLevel(logging.INFO)
+    # create a logging format
+    formatter = logging.Formatter(file_logging_format, datefmt=datefmt)
+    handler.setFormatter(formatter)
+    # add the handlers to the logger
+    logger.addHandler(handler)
+    return logger
+
+
 def plot_segmentation_images(
     savefolder,
     image_paths,
