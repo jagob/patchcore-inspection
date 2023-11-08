@@ -9,7 +9,6 @@ from torchvision import transforms
 
 _CLASSNAMES = []
 
-# # TODO
 # IMAGENET_MEAN = [0.485, 0.456, 0.406]
 # IMAGENET_STD = [0.229, 0.224, 0.225]
 
@@ -66,14 +65,17 @@ class HarborDataset(torch.utils.data.Dataset):
 
         self.transform_img = [
             transforms.Resize(resize),
+            # transforms.Resize((resize, resize)),
             transforms.CenterCrop(imagesize),
             transforms.ToTensor(),
             # transforms.Normalize(mean=IMAGENET_MEAN, std=IMAGENET_STD),
+            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
         ]
         self.transform_img = transforms.Compose(self.transform_img)
 
         self.transform_mask = [
             transforms.Resize(resize),
+            # transforms.Resize((resize, resize)),
             transforms.CenterCrop(imagesize),
             transforms.ToTensor(),
         ]
@@ -154,15 +156,17 @@ class HarborDataset(torch.utils.data.Dataset):
                 # csv_path = r'/home/jacob/code/harbor-synthetic/src/data/split/harbor_train_1000.csv'
                 # csv_path = r'/home/jacob/code/harbor-synthetic/src/data/split/harbor_train_0100.csv'
                 # csv_path = r'/home/jacob/code/harbor-synthetic/src/data/split/harbor_train_0001.csv'
+                df = pd.read_csv(csv_path)
+                df = df.sample(1200, random_state=0).sort_index() 
             elif self.split == DatasetSplit.TEST:
                 if self.test_csv:
                     csv_path = self.test_csv
                 else:
                     # csv_path = r'/home/jacob/code/harbor-synthetic/src/data/split/harbor_appearance_test.csv'
                     csv_path = r'/home/jacob/code/harbor-synthetic/src/data/split/harbor_appearance_test_1.csv'
+                df = pd.read_csv(csv_path)
             else:
                 raise ValueError()
-            df = pd.read_csv(csv_path)
 
             imgpaths_per_class[classname] = {}
             anomaly_types = ['harbor_anomaly1']

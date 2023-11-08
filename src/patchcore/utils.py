@@ -185,7 +185,7 @@ def compute_and_store_final_results(
     mean_metrics = {}
     for i, result_key in enumerate(column_names):
         mean_metrics[result_key] = np.mean([x[i] for x in results])
-        LOGGER.info("{0}: {1:3.3f}".format(result_key, mean_metrics[result_key]))
+        LOGGER.info("{0}: {1:3.4f}".format(result_key, mean_metrics[result_key]))
 
     savename = os.path.join(results_path, "results.csv")
     with open(savename, "w") as csv_file:

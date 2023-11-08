@@ -257,7 +257,7 @@ def patch_core_loader(patch_core_paths, faiss_on_gpu, faiss_num_workers):
 @click.argument("name", type=str)
 @click.argument("data_path", type=click.Path(exists=True, file_okay=False))
 @click.option("--subdatasets", "-d", multiple=True, type=str, required=True)
-@click.option("--csv_path", default=None, type=str, show_default=True)
+@click.option("--test_csv", default=None, type=str, show_default=True)
 @click.option("--batch_size", default=1, type=int, show_default=True)
 @click.option("--num_workers", default=8, type=int, show_default=True)
 @click.option("--resize", default=256, type=int, show_default=True)
@@ -267,7 +267,7 @@ def dataset(
     name,
     data_path,
     subdatasets,
-    csv_path,
+    test_csv,
     batch_size,
     resize,
     imagesize,
@@ -282,7 +282,7 @@ def dataset(
             test_dataset = dataset_library.__dict__[dataset_info[1]](
                 data_path,
                 classname=subdataset,
-                csv_path=csv_path,
+                test_csv=test_csv,
                 resize=resize,
                 imagesize=imagesize,
                 split=dataset_library.DatasetSplit.TEST,

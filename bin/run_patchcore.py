@@ -409,6 +409,8 @@ def dataset(
                 pin_memory=True,
             )
 
+            train_dataset[0]
+            test_dataset[0]
             train_dataloader.name = name
             if subdataset is not None:
                 train_dataloader.name += "_" + subdataset
