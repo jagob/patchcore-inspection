@@ -1,9 +1,8 @@
 datapath=/home/jacob/data/mvtec
 loadpath=/home/jacob/code/patchcore-inspection/models
 
-# modelfolder=IM320_Ensemble_L2-3_P001_D1024-384_PS-3_AN-1
+modelfolder=IM320_Ensemble_L2-3_P001_D1024-384_PS-3_AN-1
 # modelfolder=IM224_Ensemble_L2-3_P001_D1024-384_PS-3_AN-1
-modelfolder=IM320_WR50_L2-3_P001_D1024-1024_PS-3_AN-1
 savefolder=evaluated_results'/'$modelfolder
 
 datasets=('bottle'  'cable'  'capsule'  'carpet'  'grid'  'hazelnut' 'leather'  'metal_nut'  'pill' 'screw' 'tile' 'toothbrush' 'transistor' 'wood' 'zipper')

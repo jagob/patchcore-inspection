@@ -1,3 +1,21 @@
+# Harborfront results [[auc-micro]]
+
+| Method                                                                    | harbor-appearance | harbor-fast-moving | harbor-near-edge | harbor-high-density | harbor-tampering | harbor-mannequin | harbor-realfall |
+| ------------------------------------------------------------------------- | ----------------: | -----------------: | ---------------: | ------------------: | ---------------: | ---------------: | --------------: |
+| IM256_WR50_L2-3_P01_D1024-1024_PS-3_AN-1_S0                               |                   |                    |                  |                     |                  |                  |                 |
+| IM256_WR50_L2-3_P01_D1024-1024_PS-3_AN-1_S0_1200random                    |                   |                    |                  |                     |                  |                  |                 |
+| IM256_WR50_L2-3_P01_D1024-1024_PS-3_AN-1_S0_1500random                    |                   |                    |                  |                     |                  |                  |                 |
+| IM256_WR50_L2-3_P01_D1024-1024_PS-3_AN-1_S0_1200random_resizeresize       |                   |                    |                  |                     |                  |                  |                 |
+| IM256_WR50_L2-3_P01_D1024-1024_PS-3_AN-1_S0_1200random_normalize          |                   |                    |                  |                     |                  |                  |                 |
+| IM256_WR50_L3-4_P01_D1024-1024_PS-3_AN-1_S0_1200random                    |                   |                    |                  |                     |                  |                  |                 |
+| IM256_WR50_L2-3_P01_D1024-1024_PS-3_AN-1_S0_1200random_normalize_imagenet |                   |                    |                  |                     |                  |                  |                 |
+| IM256_WR50_L2-3_P01_D1024-1024_PS-5_AN-1_S0_1200random                    |                   |                    |                  |                     |                  |                  |                 |
+| IM256_WR50_L2-3_P01_D1024-1024_PS-7_AN-1_S0_1200random                    |                   |                    |                  |                     |                  |                  |                 |
+| IM256_WR50_L2-3_P01_D1024-1024_PS-9_AN-1_S0_1200random                    |                   |                    |                  |                     |                  |                  |                 |
+| IM256_WR50_L2-3_P001_D1024-1024_PS-5_AN-1_S0_1200random                   |                   |                    |                  |                     |                  |                  |                 |
+| IM256_WR50_L2-3_P025_D1024-1024_PS-5_AN-1_S0_1200random                   |                   |                    |                  |                     |                  |                  |                 |
+
+
 # Towards Total Recall in Industrial Anomaly Detection
 
 This repository contains the implementation for `PatchCore` as proposed in Roth et al. (2021), <https://arxiv.org/abs/2106.08265>.
