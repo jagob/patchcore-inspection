@@ -148,8 +148,6 @@ class HarborDataset(torch.utils.data.Dataset):
         #             maskpaths_per_class[classname]["good"] = None
 
         for classname in self.classnames_to_use:
-            data_path = r'/home/jacob/data/LTD Dataset/Image Dataset'
-
             csv_path = ''
             if self.split == DatasetSplit.TRAIN:
                 csv_path = self.train_csv
@@ -171,7 +169,7 @@ class HarborDataset(torch.utils.data.Dataset):
             imgpaths_per_class[classname] = {}
             anomaly_types = ['harbor_anomaly1']
             for anomaly in anomaly_types:
-                df.img_path = data_path + os.sep + df.img_path
+                df.img_path = self.source + os.sep + df.img_path
 
                 maskpaths_per_class[classname] = {}
                 if self.split == DatasetSplit.TRAIN:
